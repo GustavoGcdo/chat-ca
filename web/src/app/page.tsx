@@ -17,8 +17,14 @@ export default function Home() {
     socket = io('http://localhost:3000');
     socket.on('receive-message', (message) => {
       console.log(message);
-      
+
       setMessages((old) => old.concat(message));
+    });
+
+    socket.on('all-messages', (allMessages) => {
+      console.log(allMessages);
+      
+      setMessages(allMessages);
     });
   };
 

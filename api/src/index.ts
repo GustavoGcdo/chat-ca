@@ -2,6 +2,10 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import pino from 'pino';
+import { InMemoryRepository } from './services/InMemoryRepository';
+import { SocketEventService } from './services/EventService';
+import { SendMessage } from './useCases/SendMessage';
+import { GetMessages } from './useCases/GetMessages';
 const logger = pino({});
 
 const app = express();
@@ -10,15 +14,20 @@ const io = new Server(httpServer, {
   cors: {
     origin: '*',
   },
-  /* options */
 });
 
-io.on('connection', (socket) => {
-  // ...
-  logger.info('conectaided');
+const repository = new InMemoryRepository();
 
-  socket.on('new-message', ({message}) => {    
-    socket.broadcast.emit('receive-message', { sender: socket.id, text:message });
+io.on('connection', (socket) => {
+  const eventService = new SocketEventService(socket);
+  logger.info( `${socket.id} has conectaided`);
+
+  new GetMessages(repository).execute().then((messages) => {
+    socket.emit('all-messages', messages);
+  });
+
+  socket.on('new-message', ({ message }) => {
+    new SendMessage(eventService, repository).execute({ message, sender: socket.id });
   });
 });
 
