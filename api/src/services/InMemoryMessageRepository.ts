@@ -1,7 +1,7 @@
 import { IMessageRepository } from './Interfaces';
 import { Message } from '../Entities/Message';
 
-export class InMemoryRepository implements IMessageRepository {
+export class InMemoryMessageRepository implements IMessageRepository {
   private messages: Message[];
 
   constructor() {
@@ -9,7 +9,9 @@ export class InMemoryRepository implements IMessageRepository {
   }
 
   async getAll(): Promise<Message[]> {
-    return this.messages.map((message) => new Message(message.sender, message.text));
+    return this.messages.map(
+      (message) => new Message({ userEmail: message.userEmail, text: message.text }),
+    );
   }
 
   async save(message: Message): Promise<void> {

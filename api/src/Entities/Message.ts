@@ -1,3 +1,13 @@
+type Props = {
+  userEmail: string;
+  text: string;
+};
 export class Message {
-  constructor(public readonly sender: string, public readonly text: string) {}
+  public readonly userEmail: string;
+  public readonly text: string;
+
+  constructor(props: Props) {
+    this.userEmail = props.userEmail;
+    this.text = props.text;
+  }
 }

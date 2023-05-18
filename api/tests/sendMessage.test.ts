@@ -16,7 +16,7 @@ describe('caso de uso: Nova mensagem', () => {
   test('deve mandar uma mensagem no chat', async () => {
     await expect(async () =>
       useCase.execute({
-        sender: 'idSender',
+        userEmail: 'alguem@email.com',
         message: 'hello',
       }),
     ).not.toThrowError();
@@ -26,7 +26,7 @@ describe('caso de uso: Nova mensagem', () => {
     const spy = jest.spyOn(eventService, 'notifyAll');
 
     await useCase.execute({
-      sender: 'idSender',
+      userEmail: 'alguem@email.com',
       message: 'hello',
     });
 
@@ -37,7 +37,7 @@ describe('caso de uso: Nova mensagem', () => {
     const spy = jest.spyOn(repository, 'save');
 
     await useCase.execute({
-      sender: 'idSender',
+      userEmail: 'alguem@email.com',
       message: 'hello',
     });
 

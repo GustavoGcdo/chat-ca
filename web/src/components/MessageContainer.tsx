@@ -1,20 +1,19 @@
 import React from 'react';
 
 export type Message = {
-  sender: string;
+  userEmail: string;
   text: string;
 };
 
 type Props = {
-  me?: string;
+  me?: any;
   messages: Message[];
 };
 
 const MessageContainer = ({ messages, me }: Props) => {
-  console.log(me);
-
+  
   const isMyMessage = (message: Message) => {
-    return me == message.sender;
+    return me.email == message.userEmail;
   };
 
   return (
