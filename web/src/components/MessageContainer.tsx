@@ -1,23 +1,16 @@
-import React from 'react';
-import { User } from '../app/page';
+import { Message } from '../store/slices/message.slice';
+import { useAppStore } from '../store/store';
 
-export type Message = {
-  user: User;
-  text: string;
-};
 
-type Props = {
-  me?: any;
-  messages: Message[];
-};
+const MessageContainer = () => {
+  const { userLogged, messages } = useAppStore();
 
-const MessageContainer = ({ messages, me }: Props) => {
   const isMyMessage = (message: Message) => {
-    return me.email == message.user.email;
+    return userLogged?.email == message.user.email;
   };
 
   return (
-    <div className="p-2 my-2 rounded h-full min-h-[400px] bg-white overflow-auto">
+    <div className="p-2 my-2 rounded h-full min-h-[400px] max-h-[400px] bg-white overflow-auto">
       <div className="flex flex-col gap-2">
         {messages.map((message, index) => (
           <span

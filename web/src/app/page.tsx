@@ -1,51 +1,43 @@
 'use client';
-import { useEffect, useState } from 'react';
-import io, { Socket } from 'socket.io-client';
+import { useEffect } from 'react';
+import { Socket } from 'socket.io-client';
 import InputMessage from '../components/InputMessage';
-import MessageContainer, { Message } from '../components/MessageContainer';
 import { Login } from '../components/Login';
-
-let socket: Socket;
-
-export type User = {
-  name: string;
-  socketId: string;
-  email: string;
-};
+import MessageContainer from '../components/MessageContainer';
+import { User } from '../store/slices/user.slice';
+import { useAppStore } from '../store/store';
 
 export default function Home() {
-  const [userLogged, setUserLogged] = useState<User | undefined>(undefined);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { userLogged, login, socket, isOnline, setInitialMessages, addMessage } = useAppStore();
 
   useEffect(() => {
     socketInitializer();
   }, []);
 
   const socketInitializer = async () => {
-    socket = io('http://localhost:3003');
+    if (!socket) return;
 
     socket.on('login-success', (user: User) => {
-      setUserLogged(user);
+      login(user);
     });
 
     socket.on('receive-message', (message) => {
-      setMessages((old) => old.concat(message));
+      addMessage(message);
     });
 
     socket.on('all-messages', (allMessages) => {
-      setMessages(allMessages);
+      setInitialMessages(allMessages);
     });
   };
 
   const handleSend = (message: string) => {
-    if (message.trim().length > 0 && userLogged) {
-      setMessages((old) => old.concat({ user: userLogged, text: message }));
+    if (message.trim().length > 0 && userLogged && socket) {
       socket.emit('new-message', { message, userEmail: userLogged.email });
     }
   };
 
   const handleLoginSend = (user: any) => {
-    socket.emit('login', user);
+    if (socket) socket.emit('login', user);
   };
 
   return (
@@ -56,10 +48,11 @@ export default function Home() {
         </div>
       ) : (
         <div className="w-full max-w-xl">
-          <MessageContainer me={userLogged} messages={messages} />
+          <MessageContainer />
           <InputMessage onSend={handleSend} />
         </div>
       )}
+      <span className="mt-5 px-2 rounded text-white bg-gray-500">{isOnline ? 'Online' : 'Offline'}</span>
     </main>
   );
 }

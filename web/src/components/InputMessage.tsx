@@ -1,4 +1,5 @@
 import { SyntheticEvent, useState } from 'react';
+import { useAppStore } from '../store/store';
 
 type Props = {
   onSend: (message: string) => void;
@@ -6,11 +7,16 @@ type Props = {
 
 const InputMessage = ({ onSend }: Props) => {
   const [value, setValue] = useState('');
+  const { userLogged, addMessage } = useAppStore();
 
   const handleSend = (event: SyntheticEvent<any>) => {
     event.preventDefault();
-    onSend(value || '');
-    setValue('');
+    
+    if (value.trim().length > 0 && userLogged) {
+      addMessage({ user: userLogged, text: value });
+      setValue('');
+      onSend(value);
+    }
   };
 
   return (
