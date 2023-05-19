@@ -1,21 +1,17 @@
 import { SyntheticEvent, useState } from 'react';
-import { useAppStore } from '../store/store';
+import { useRealtimeStore, useUserStore } from '../store/store';
 
-type Props = {
-  onSend: (message: string) => void;
-};
-
-const InputMessage = ({ onSend }: Props) => {
+const InputMessage = () => {
   const [value, setValue] = useState('');
-  const { userLogged, addMessage } = useAppStore();
+  const { userLogged } = useUserStore();
+  const { socket } = useRealtimeStore();
 
   const handleSend = (event: SyntheticEvent<any>) => {
     event.preventDefault();
-    
-    if (value.trim().length > 0 && userLogged) {
-      addMessage({ user: userLogged, text: value });
+
+    if (value.trim().length > 0 && userLogged && socket) {
+      socket.emit('new-message', { message: value, userEmail: userLogged.email });
       setValue('');
-      onSend(value);
     }
   };
 

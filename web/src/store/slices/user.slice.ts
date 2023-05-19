@@ -9,11 +9,15 @@ export type User = {
 export interface UserSlice {
   userLogged: User | undefined;
   login: (user: User) => void;
+  logout: () => void;
 }
 
 export const userSlice: StateCreator<UserSlice> = (set) => ({
   userLogged: undefined,
   login: (user: User) => {
     set({ userLogged: user });
+  },
+  logout: () => {
+    set({ userLogged: undefined });
   },
 });

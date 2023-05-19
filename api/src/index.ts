@@ -22,7 +22,7 @@ const messageRepository = new InMemoryMessageRepository();
 const userRepository = new InMemoryUserRepository();
 
 io.on('connection', (socket) => {
-  const eventService = new SocketEventService(socket);
+  const eventService = new SocketEventService(socket, io);
   logger.info(`${socket.id} has conectaided`);
 
   socket.on('login', async (data) => {
@@ -37,6 +37,10 @@ io.on('connection', (socket) => {
   socket.on('new-message', ({ message, userEmail }) => {
     new SendMessage(eventService, messageRepository, userRepository).execute({ message, userEmail });
   });
+
+  socket.on('disconnect', () => {
+    logger.info(`${socket.id} has disconnect`);
+  })
 });
 
 const PORT = 3003;

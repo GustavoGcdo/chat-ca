@@ -1,14 +1,15 @@
 'use client';
 import { useEffect } from 'react';
-import { Socket } from 'socket.io-client';
 import InputMessage from '../components/InputMessage';
 import { Login } from '../components/Login';
 import MessageContainer from '../components/MessageContainer';
 import { User } from '../store/slices/user.slice';
-import { useAppStore } from '../store/store';
+import { useMessageStore, useRealtimeStore, useUserStore } from '../store/store';
 
 export default function Home() {
-  const { userLogged, login, socket, isOnline, setInitialMessages, addMessage } = useAppStore();
+  const { userLogged, logout, login } = useUserStore();
+  const { setInitialMessages, addMessage } = useMessageStore();
+  const { socket, isOnline } = useRealtimeStore();
 
   useEffect(() => {
     socketInitializer();
@@ -30,12 +31,6 @@ export default function Home() {
     });
   };
 
-  const handleSend = (message: string) => {
-    if (message.trim().length > 0 && userLogged && socket) {
-      socket.emit('new-message', { message, userEmail: userLogged.email });
-    }
-  };
-
   const handleLoginSend = (user: any) => {
     if (socket) socket.emit('login', user);
   };
@@ -49,10 +44,10 @@ export default function Home() {
       ) : (
         <div className="w-full max-w-xl">
           <MessageContainer />
-          <InputMessage onSend={handleSend} />
+          <InputMessage />
         </div>
       )}
-      <span className="mt-5 px-2 rounded text-white bg-gray-500">{isOnline ? 'Online' : 'Offline'}</span>
+      {/* <span className="mt-5 px-2 rounded text-white bg-gray-500"> {typeof window !== 'undefined' && isOnline ? 'Online' : 'Offline'}</span> */}
     </main>
   );
 }

@@ -4,6 +4,7 @@ import { User } from './user.slice';
 export type Message = {
   user: User;
   text: string;
+  date: string;
 };
 
 export interface MessageSlice {
