@@ -1,4 +1,4 @@
-import { SyntheticEvent, useRef, useState } from 'react';
+import { SyntheticEvent, useState } from 'react';
 
 type Props = {
   onSend: (message: string) => void;
@@ -16,6 +16,7 @@ const InputMessage = ({ onSend }: Props) => {
   return (
     <form className="flex pl-3 bg-white rounded" onSubmit={handleSend}>
       <input
+        autoFocus
         value={value}
         onChange={(e) => setValue(e.target.value)}
         className="py-2 bg-transparent w-full focus:outline-none"

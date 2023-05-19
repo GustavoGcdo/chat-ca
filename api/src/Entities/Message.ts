@@ -1,13 +1,15 @@
+import { User } from "./User";
+
 type Props = {
-  userEmail: string;
+  user: User;
   text: string;
 };
 export class Message {
-  public readonly userEmail: string;
+  public readonly user: User;
   public readonly text: string;
 
   constructor(props: Props) {
-    this.userEmail = props.userEmail;
+    this.user = props.user;
     this.text = props.text;
   }
 }

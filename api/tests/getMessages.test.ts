@@ -2,6 +2,7 @@ import { mock } from 'jest-mock-extended';
 import { Message } from '../src/Entities/Message';
 import { IMessageRepository } from '../src/services/Interfaces';
 import { GetMessages } from '../src/useCases/GetMessages';
+import { User } from '../src/Entities/User';
 
 describe('caso de uso: Obter mensagens', () => {
   let repository = mock<IMessageRepository>();
@@ -14,7 +15,7 @@ describe('caso de uso: Obter mensagens', () => {
 
   test('deve obter as mensagens anteriores', async () => {
     await repository.getAll.mockResolvedValue([
-      new Message({ userEmail: 'alguem@email', text: 'hello' }),
+      new Message({ user: new User('alguem@email', 'alguem', 'idFake'), text: 'hello' }),
     ]);
     const reponse = await useCase.execute();
     expect(Array.isArray(reponse)).toBeTruthy();

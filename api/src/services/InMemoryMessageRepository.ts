@@ -10,7 +10,7 @@ export class InMemoryMessageRepository implements IMessageRepository {
 
   async getAll(): Promise<Message[]> {
     return this.messages.map(
-      (message) => new Message({ userEmail: message.userEmail, text: message.text }),
+      (message) => new Message({ user: message.user, text: message.text }),
     );
   }
 

@@ -1,19 +1,26 @@
 import { mock } from 'jest-mock-extended';
-import { IEventService, IMessageRepository } from '../src/services/Interfaces';
+import { IEventService, IMessageRepository, IUserRepository } from '../src/services/Interfaces';
 import { SendMessage } from '../src/useCases/SendMessage';
+import { User } from '../src/Entities/User';
 
 describe('caso de uso: Nova mensagem', () => {
   let eventService = mock<IEventService>();
   let repository = mock<IMessageRepository>();
-  let useCase = new SendMessage(eventService, repository);
+  let userRepository = mock<IUserRepository>();
+
+  let useCase = new SendMessage(eventService, repository, userRepository);
 
   beforeEach(() => {
     eventService.notifyAll.mockReset();
     repository.save.mockReset();
-    useCase = new SendMessage(eventService, repository);
+    userRepository.findByEmail.mockReset();
+
+    useCase = new SendMessage(eventService, repository, userRepository);
   });
 
   test('deve mandar uma mensagem no chat', async () => {
+    userRepository.findByEmail.mockResolvedValue(new User('alguem@email', 'alguem', 'idFake'));
+
     await expect(async () =>
       useCase.execute({
         userEmail: 'alguem@email.com',
@@ -24,6 +31,7 @@ describe('caso de uso: Nova mensagem', () => {
 
   test('deve emitir a mensagem para todos os usuários ativos', async () => {
     const spy = jest.spyOn(eventService, 'notifyAll');
+    userRepository.findByEmail.mockResolvedValue(new User('alguem@email', 'alguem', 'idFake'));
 
     await useCase.execute({
       userEmail: 'alguem@email.com',
@@ -35,6 +43,7 @@ describe('caso de uso: Nova mensagem', () => {
 
   test('deve salvar a mensagem em um repositorio de dados', async () => {
     const spy = jest.spyOn(repository, 'save');
+    userRepository.findByEmail.mockResolvedValue(new User('alguem@email', 'alguem', 'idFake'));
 
     await useCase.execute({
       userEmail: 'alguem@email.com',
@@ -43,4 +52,13 @@ describe('caso de uso: Nova mensagem', () => {
 
     expect(spy).toBeCalled();
   });
+
+  test('deve falhar ao tentar mandar mensagem caso o usuario não existsa', async () => { 
+    userRepository.findByEmail.mockResolvedValue(undefined);
+
+    await expect(useCase.execute({
+      userEmail: 'alguem@email.com',
+      message: 'hello',
+    })).rejects.toThrowError();
+   })
 });

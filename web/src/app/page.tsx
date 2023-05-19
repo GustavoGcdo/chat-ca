@@ -7,8 +7,14 @@ import { Login } from '../components/Login';
 
 let socket: Socket;
 
+export type User = {
+  name: string;
+  socketId: string;
+  email: string;
+};
+
 export default function Home() {
-  const [userLogged, setUserLogged] = useState<any>(undefined);
+  const [userLogged, setUserLogged] = useState<User | undefined>(undefined);
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
@@ -16,9 +22,9 @@ export default function Home() {
   }, []);
 
   const socketInitializer = async () => {
-    socket = io('http://localhost:3000');
+    socket = io('http://localhost:3003');
 
-    socket.on('login-success', (user) => {
+    socket.on('login-success', (user: User) => {
       setUserLogged(user);
     });
 
@@ -32,8 +38,8 @@ export default function Home() {
   };
 
   const handleSend = (message: string) => {
-    if (message.trim().length > 0) {
-      setMessages((old) => old.concat({ userEmail: userLogged.email, text: message }));
+    if (message.trim().length > 0 && userLogged) {
+      setMessages((old) => old.concat({ user: userLogged, text: message }));
       socket.emit('new-message', { message, userEmail: userLogged.email });
     }
   };

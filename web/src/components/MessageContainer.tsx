@@ -1,7 +1,8 @@
 import React from 'react';
+import { User } from '../app/page';
 
 export type Message = {
-  userEmail: string;
+  user: User;
   text: string;
 };
 
@@ -11,9 +12,8 @@ type Props = {
 };
 
 const MessageContainer = ({ messages, me }: Props) => {
-  
   const isMyMessage = (message: Message) => {
-    return me.email == message.userEmail;
+    return me.email == message.user.email;
   };
 
   return (
@@ -21,12 +21,13 @@ const MessageContainer = ({ messages, me }: Props) => {
       <div className="flex flex-col gap-2">
         {messages.map((message, index) => (
           <span
-            className={`px-3 py-1 rounded ${
-              isMyMessage(message) ? 'self-end bg-gray-200' : 'self-start bg-blue-200'
+            className={`px-3 flex flex-col py-1 rounded ${
+              isMyMessage(message) ? 'self-end text-end bg-gray-200' : 'self-start bg-blue-200'
             }`}
             key={index}
           >
-            {message.text}
+            <span>{message.text}</span>
+            <span className="text-xs text-gray-500">{message.user.email}</span>
           </span>
         ))}
       </div>

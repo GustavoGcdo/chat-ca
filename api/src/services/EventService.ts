@@ -6,6 +6,6 @@ export class SocketEventService implements IEventService {
   constructor(private socket: Socket) {}
 
   notifyAll(message: Message): void {
-    this.socket.broadcast.emit('receive-message', { userEmail: message.userEmail, text: message.text });
+    this.socket.broadcast.emit('receive-message', { user: message.user, text: message.text });
   }
 }

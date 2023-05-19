@@ -35,11 +35,11 @@ io.on('connection', (socket) => {
   });
 
   socket.on('new-message', ({ message, userEmail }) => {
-    new SendMessage(eventService, messageRepository).execute({ message, userEmail });
+    new SendMessage(eventService, messageRepository, userRepository).execute({ message, userEmail });
   });
 });
 
-const PORT = 3000;
+const PORT = 3003;
 httpServer.listen(PORT, () => {
   logger.info(`[server] > server is runing on port ${PORT}`);
 });
