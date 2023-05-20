@@ -33,6 +33,12 @@ export class AddFriendship {
       receiveUser,
     });
 
+    const alreadyHaveFriendship = await this.friendshipRepository.findFriendship(newFriendship);
+    if (alreadyHaveFriendship) {
+      throw new Error('already have friendship with this user');
+    }
+
     await this.friendshipRepository.save(newFriendship);
+    return newFriendship;
   }
 }

@@ -9,18 +9,10 @@ import { User } from '../../store/slices/user.slice';
 import { useMessageStore, useRealtimeStore, useUserStore } from '../../store/store';
 
 export default function ChatPage() {
-  const { userLogged } = useUserStore();
+  const { userLogged, friends, addFriendList, addFriend } = useUserStore();
   const { addMessage } = useMessageStore();
   const { socket } = useRealtimeStore();
   const router = useRouter();
-
-  const [friends, setFriends] = useState<User[]>([
-    { email: 'alguem@gmail.com', name: 'alguem', socketId: 'asdfasdf654a' },
-    { email: 'alguem@gmail.com', name: 'alguem', socketId: 'asdfasdfa3' },
-    { email: 'alguem@gmail.com', name: 'alguem', socketId: 'asdfasdfa5' },
-    { email: 'alguem@gmail.com', name: 'alguem', socketId: 'asdfasdfa6' },
-    { email: 'alguem@gmail.com', name: 'alguem', socketId: 'asdfasdfa234' },
-  ]);
 
   const [emailToAdd, setEmailToAdd] = useState('');
 
@@ -33,14 +25,26 @@ export default function ChatPage() {
 
     return () => {
       socket?.off('receive-message');
+      socket?.off('all-friends');
+      socket?.off('new-friend');
     };
   }, []);
 
   const socketInitializer = async () => {
     if (!socket) return;
 
+    socket.emit('get-friends', { userEmail: userLogged?.email });
+
     socket.on('receive-message', (message) => {
       addMessage(message);
+    });
+
+    socket.on('new-friend', (friend) => {
+      addFriend(friend);
+    });
+
+    socket.on('all-friends', (friends) => {
+      addFriendList(friends);
     });
   };
 
@@ -53,12 +57,17 @@ export default function ChatPage() {
       userEmail: userLogged.email,
       userFriendEmail: emailToAdd,
     });
+
   };
 
   return (
     <div className="flex gap-10 w-full justify-center">
       <div className="w-full max-w-md pb-10">
-        <h3 className="text-center font-medium py-4 text-xl">Amigos</h3>
+        <h3 className="text-center font-medium py-4 text-xl">
+          Bem vindo
+          <strong className="ml-2 font-bold">{userLogged?.email}</strong>!
+        </h3>
+        <h3 className="text-start font-medium py-4 text-xl">Amigos</h3>
 
         <form className="mb-5" onSubmit={handleAddFriend}>
           <InputButton

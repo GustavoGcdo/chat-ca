@@ -10,6 +10,7 @@ import { Login } from './useCases/Login';
 import { SendMessage } from './useCases/SendMessage';
 import { AddFriendship } from './useCases/AddUserFriend';
 import { InMemoryFriendshipRepository } from './services/InMemoryFriendshipRepository';
+import { GetFriends } from './useCases/GetFriends';
 const logger = pino({});
 
 const app = express();
@@ -37,6 +38,12 @@ io.on('connection', (socket) => {
     });
   });
 
+  socket.on('get-friends', ({ userEmail }) => {
+    new GetFriends(friendshipRepository).execute({ userEmail }).then((friends) => {
+      socket.emit('all-friends', friends);
+    });
+  });
+
   socket.on('new-message', ({ message, userEmail }) => {
     new SendMessage(eventService, messageRepository, userRepository).execute({
       message,
@@ -46,7 +53,10 @@ io.on('connection', (socket) => {
 
   socket.on('add-friendship', async (data) => {
     try {
-      await new AddFriendship(userRepository, friendshipRepository).execute(data);
+      const friendship = await new AddFriendship(userRepository, friendshipRepository).execute(data);
+      socket.to(friendship.receiveUser.socketId).emit('new-friend', friendship.requestUser);
+      socket.emit('new-friend', friendship.receiveUser);
+      
       logger.info(`friendship added ${JSON.stringify(data)}`);
     } catch (error) {
       logger.info(`friendship added error ${(error as Error).toString()}`);
