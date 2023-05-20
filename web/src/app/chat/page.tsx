@@ -1,12 +1,12 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import Input from '../../components/Input';
-import { useMessageStore, useRealtimeStore, useUserStore } from '../../store/store';
-import { User } from '../../store/slices/user.slice';
-import MessageContainer from '../../components/MessageContainer';
+import { SyntheticEvent, useEffect, useState } from 'react';
+import InputButton from '../../components/InputButton';
 import InputMessage from '../../components/InputMessage';
+import MessageContainer from '../../components/MessageContainer';
+import { User } from '../../store/slices/user.slice';
+import { useMessageStore, useRealtimeStore, useUserStore } from '../../store/store';
 
 export default function ChatPage() {
   const { userLogged } = useUserStore();
@@ -21,6 +21,8 @@ export default function ChatPage() {
     { email: 'alguem@gmail.com', name: 'alguem', socketId: 'asdfasdfa6' },
     { email: 'alguem@gmail.com', name: 'alguem', socketId: 'asdfasdfa234' },
   ]);
+
+  const [emailToAdd, setEmailToAdd] = useState('');
 
   if (userLogged == undefined) {
     router.replace('/');
@@ -42,18 +44,33 @@ export default function ChatPage() {
     });
   };
 
+  const handleAddFriend = (e: SyntheticEvent<any>) => {
+    e.preventDefault();
+
+    if (!userLogged || !socket) return;
+
+    socket.emit('add-friendship', {
+      userEmail: userLogged.email,
+      userFriendEmail: emailToAdd,
+    });
+  };
+
   return (
     <div className="flex gap-10 w-full justify-center">
       <div className="w-full max-w-md pb-10">
         <h3 className="text-center font-medium py-4 text-xl">Amigos</h3>
 
-        <div className="mb-5">
-          <Input
+        <form className="mb-5" onSubmit={handleAddFriend}>
+          <InputButton
             name="email"
-            label="Adicionar novo amigo"
-            placeholder="Informe o email do seu amigo"
+            buttonText="adicionar"
+            inputProps={{
+              placeholder: 'Informe o email do seu amigo',
+              value: emailToAdd,
+              onChange: (e) => setEmailToAdd(e.target.value),
+            }}
           />
-        </div>
+        </form>
 
         <div>
           <span className="block mb-3">Meus amigos</span>

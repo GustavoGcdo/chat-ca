@@ -1,15 +1,22 @@
 import { Friendship } from '../Entities/Friendship';
-import { IUserRepository } from '../services/Interfaces';
+import { IFriendshipRepository, IUserRepository } from '../services/Interfaces';
 
-type AddUserFriendDto = {
+type AddFriendshipDto = {
   userEmail: string;
   userFriendEmail: string;
 };
 
-export class AddUserFriend {
-  constructor(private readonly userRepository: IUserRepository) {}
+export class AddFriendship {
+  constructor(
+    private readonly userRepository: IUserRepository,
+    private readonly friendshipRepository: IFriendshipRepository,
+  ) {}
 
-  async execute(dto: AddUserFriendDto) {
+  async execute(dto: AddFriendshipDto) {
+    if (dto.userEmail == dto.userFriendEmail) {
+      throw new Error('you can add yourself as a friend');
+    }
+
     const requestUser = await this.userRepository.findByEmail(dto.userEmail);
     const receiveUser = await this.userRepository.findByEmail(dto.userFriendEmail);
 
@@ -21,9 +28,11 @@ export class AddUserFriend {
       throw new Error('friend user not found');
     }
 
-    return new Friendship({
+    const newFriendship = new Friendship({
       requestUser,
       receiveUser,
     });
+
+    await this.friendshipRepository.save(newFriendship);
   }
 }

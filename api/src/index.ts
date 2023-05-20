@@ -8,6 +8,8 @@ import { InMemoryUserRepository } from './services/InMemoryUserRepository';
 import { GetMessages } from './useCases/GetMessages';
 import { Login } from './useCases/Login';
 import { SendMessage } from './useCases/SendMessage';
+import { AddFriendship } from './useCases/AddUserFriend';
+import { InMemoryFriendshipRepository } from './services/InMemoryFriendshipRepository';
 const logger = pino({});
 
 const app = express();
@@ -20,6 +22,7 @@ const io = new Server(httpServer, {
 
 const messageRepository = new InMemoryMessageRepository();
 const userRepository = new InMemoryUserRepository();
+const friendshipRepository = new InMemoryFriendshipRepository();
 
 io.on('connection', (socket) => {
   const eventService = new SocketEventService(socket, io);
@@ -35,12 +38,24 @@ io.on('connection', (socket) => {
   });
 
   socket.on('new-message', ({ message, userEmail }) => {
-    new SendMessage(eventService, messageRepository, userRepository).execute({ message, userEmail });
+    new SendMessage(eventService, messageRepository, userRepository).execute({
+      message,
+      userEmail,
+    });
+  });
+
+  socket.on('add-friendship', async (data) => {
+    try {
+      await new AddFriendship(userRepository, friendshipRepository).execute(data);
+      logger.info(`friendship added ${JSON.stringify(data)}`);
+    } catch (error) {
+      logger.info(`friendship added error ${(error as Error).toString()}`);
+    }
   });
 
   socket.on('disconnect', () => {
     logger.info(`${socket.id} has disconnect`);
-  })
+  });
 });
 
 const PORT = 3003;

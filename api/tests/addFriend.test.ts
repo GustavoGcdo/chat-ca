@@ -1,11 +1,11 @@
 import { mock } from 'jest-mock-extended';
-import { Friendship } from '../src/Entities/Friendship';
 import { User } from '../src/Entities/User';
-import { IUserRepository } from '../src/services/Interfaces';
-import { AddUserFriend } from '../src/useCases/AddUserFriend';
+import { IFriendshipRepository, IUserRepository } from '../src/services/Interfaces';
+import { AddFriendship } from '../src/useCases/AddUserFriend';
 
 test('deve adicionar um amigo a lista de amigos', async () => {
   let userRepo = mock<IUserRepository>();
+  let friendshipRepo = mock<IFriendshipRepository>();
 
   const user = new User('alguem@email.com', 'alguem', 'socket1');
   const userToAddFriend = new User('outrapessoa@email.com', 'Outro Alguem', 'socket2');
@@ -18,13 +18,26 @@ test('deve adicionar um amigo a lista de amigos', async () => {
     }
   });
 
-  const useCase = new AddUserFriend(userRepo);
-  const response = await useCase.execute({
+  const useCase = new AddFriendship(userRepo, friendshipRepo);
+
+  await useCase.execute({
     userEmail: user.email,
     userFriendEmail: userToAddFriend.email,
   });
 
-  expect(response).toBeInstanceOf(Friendship);
-  expect(response.requestUser).toBe(user);
-  expect(response.receiveUser).toBe(userToAddFriend);
+  expect(friendshipRepo.save).toBeCalled();
+});
+
+test('nao deve adicionar voce mesmo como amigo', async () => {
+  let userRepo = mock<IUserRepository>();
+  let friendshipRepo = mock<IFriendshipRepository>();
+
+  const user = new User('alguem@email.com', 'alguem', 'socket1');
+  const useCase = new AddFriendship(userRepo, friendshipRepo);
+
+  await expect(useCase.execute({
+      userEmail: user.email,
+      userFriendEmail: user.email,
+    }),
+  ).rejects.toThrowError();
 });

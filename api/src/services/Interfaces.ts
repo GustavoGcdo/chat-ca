@@ -1,3 +1,4 @@
+import { Friendship } from '../Entities/Friendship';
 import { Message } from '../Entities/Message';
 import { User } from '../Entities/User';
 
@@ -14,4 +15,8 @@ export interface IUserRepository {
   findByEmail(email: string): Promise<User | undefined>;
   save(user: User): Promise<void>;
   vinculeToSocket(email: string, socketId: string): Promise<void>;
+}
+
+export interface IFriendshipRepository {
+  save(friendship: Friendship): Promise<void>;
 }
