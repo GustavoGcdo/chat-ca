@@ -7,11 +7,11 @@ const MessageContainer = () => {
   const { userLogged } = useUserStore();
   const messages = useMessageStore((state) => state.messages);
 
-  const signalScroll = useRef<HTMLDivElement>(null);
+  const containerScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const unsubscribe = useMessageStore.subscribe(() => {
-      signalScroll.current?.lastElementChild?.scrollIntoView({
+      containerScrollRef.current?.lastElementChild?.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
         inline: 'end',
@@ -33,7 +33,7 @@ const MessageContainer = () => {
 
   return (
     <div className="p-2 my-2 rounded h-full min-h-[400px] max-h-[400px] bg-white overflow-auto">
-      <div className="flex flex-col gap-2 pb-10" ref={signalScroll}>
+      <div className="flex flex-col gap-2 pb-10" ref={containerScrollRef}>
         {messages.map((message, index) => (
           <div
             className={`px-2 pb-3 flex flex-col py-1 rounded relative ${
