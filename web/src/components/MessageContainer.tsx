@@ -6,11 +6,12 @@ import { useMessageStore, useUserStore } from '../store/store';
 const MessageContainer = () => {
   const { userLogged } = useUserStore();
   const messages = useMessageStore((state) => state.messages);
-
   const containerScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const unsubscribe = useMessageStore.subscribe(() => {
+      console.log(messages);
+      
       containerScrollRef.current?.lastElementChild?.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
