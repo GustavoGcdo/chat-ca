@@ -32,6 +32,8 @@ export default function Home() {
   };
 
   const handleLoginSend = (user: any) => {
+    console.log('opa', socket)
+    
     if (socket) socket.emit('login', user);
   };
 
@@ -47,7 +49,7 @@ export default function Home() {
           <InputMessage />
         </div>
       )}
-      {/* <span className="mt-5 px-2 rounded text-white bg-gray-500"> {typeof window !== 'undefined' && isOnline ? 'Online' : 'Offline'}</span> */}
+      <span className="mt-5 px-2 rounded text-white bg-gray-500"> {typeof window !== 'undefined' && isOnline ? 'Online' : 'Offline'}</span>
     </main>
   );
 }
