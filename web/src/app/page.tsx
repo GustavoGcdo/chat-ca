@@ -38,10 +38,8 @@ export default function Home() {
   };
 
   return (
-    <>
-      <div className="w-full h-full max-w-md">
-        <Login onLoginSend={handleLoginSend} />
-      </div>
-    </>
+    <div className="w-full h-full max-w-md">
+      <Login onLoginSend={handleLoginSend} />
+    </div>
   );
 }
