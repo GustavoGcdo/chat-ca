@@ -3,14 +3,18 @@ import { useRealtimeStore, useUserStore } from '../store/store';
 
 const InputMessage = () => {
   const [value, setValue] = useState('');
-  const { userLogged } = useUserStore();
+  const { userLogged, activeFriend } = useUserStore();
   const { socket } = useRealtimeStore();
 
   const handleSend = (event: SyntheticEvent<any>) => {
     event.preventDefault();
 
-    if (value.trim().length > 0 && userLogged && socket) {
-      socket.emit('new-message', { message: value, userEmail: userLogged.email });
+    if (value.trim().length > 0 && userLogged && socket && activeFriend) {
+      socket.emit('new-message', {
+        message: value,
+        userEmail: userLogged.email,
+        receiverEmail: activeFriend.email,
+      });
       setValue('');
     }
   };

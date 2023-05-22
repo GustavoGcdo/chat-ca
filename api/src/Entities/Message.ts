@@ -1,12 +1,14 @@
 import { User } from './User';
 
 type Props = {
-  user: User;
+  sender: User;
+  receiver: User;
   text: string;
   date?: Date;
 };
 export class Message {
-  public readonly user: User;
+  public readonly sender: User;
+  public readonly receiver: User;
   public readonly text: string;
   public readonly date: Date;
 
@@ -15,7 +17,8 @@ export class Message {
       throw new Error('text message is empty');
     }
 
-    this.user = props.user;
+    this.sender = props.sender;
+    this.receiver = props.receiver;
     this.text = props.text;
     this.date = props.date || new Date();
   }

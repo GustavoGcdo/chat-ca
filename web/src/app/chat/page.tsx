@@ -7,23 +7,47 @@ import InputMessage from '../../components/InputMessage';
 import MessageContainer from '../../components/MessageContainer';
 import { User } from '../../store/slices/user.slice';
 import { useMessageStore, useRealtimeStore, useUserStore } from '../../store/store';
+import { Message } from '../../store/slices/message.slice';
 
 export default function ChatPage() {
-  const { userLogged, friends, addFriendList, addFriend } = useUserStore();
-  const { addMessage } = useMessageStore();
+  const { userLogged, friends, addFriendList, addFriend, setActiveFriend, activeFriend } =
+    useUserStore();
+  const { addMessage, setInitialMessages } = useMessageStore();
   const { socket } = useRealtimeStore();
   const router = useRouter();
 
   const [emailToAdd, setEmailToAdd] = useState('');
 
-  if (userLogged == undefined) {
-    router.replace('/');
-  }
-
   useEffect(() => {
     socketInitializer();
 
+    const unsubscribe = useUserStore.subscribe((state) => {
+      if (!socket) return;
+
+      if (state.userLogged == undefined) {
+        router.replace('/');
+      }
+
+      socket.off('receive-message');
+
+      socket.on('receive-message', (message: Message) => {
+        const meSendingMessage =
+          message.sender.email == userLogged?.email &&
+          message.receiver.email == state.activeFriend?.email;
+
+        const myActiveFriendSendingMessage =
+          message.receiver.email == userLogged?.email &&
+          message.sender.email == state.activeFriend?.email;
+
+        if (meSendingMessage || myActiveFriendSendingMessage) {
+          addMessage(message);
+        }
+      });
+    });
+
     return () => {
+      unsubscribe();
+
       socket?.off('receive-message');
       socket?.off('all-friends');
       socket?.off('new-friend');
@@ -35,16 +59,16 @@ export default function ChatPage() {
 
     socket.emit('get-friends', { userEmail: userLogged?.email });
 
-    socket.on('receive-message', (message) => {
-      addMessage(message);
-    });
-
     socket.on('new-friend', (friend) => {
       addFriend(friend);
     });
 
     socket.on('all-friends', (friends) => {
       addFriendList(friends);
+    });
+
+    socket.on('private-messages', (messages) => {
+      setInitialMessages(messages);
     });
   };
 
@@ -57,7 +81,17 @@ export default function ChatPage() {
       userEmail: userLogged.email,
       userFriendEmail: emailToAdd,
     });
+  };
 
+  const handleActiveFriend = (friend: User) => {
+    if (!socket || !userLogged) return;
+
+    setActiveFriend(friend);
+
+    socket.emit('get-private-messages', {
+      userEmail: userLogged.email,
+      friendEmail: friend.email,
+    });
   };
 
   return (
@@ -84,10 +118,15 @@ export default function ChatPage() {
         <div>
           <span className="block mb-3">Meus amigos</span>
           <div className="flex flex-col gap-2">
-            {friends.map((friend) => (
+            {friends.map((friend: User) => (
               <div
-                className="p-2 bg-gray-300 border-2 border-slate-400 rounded"
+                className={`p-2 bg-gray-300 border-2 rounded ${
+                  activeFriend?.email == friend.email
+                    ? 'bg-slate-900 text-white border-slate-900'
+                    : 'bg-gray-300 border-slate-400'
+                }`}
                 key={friend.socketId}
+                onClick={() => handleActiveFriend(friend)}
               >
                 {friend.name}
               </div>
@@ -96,10 +135,12 @@ export default function ChatPage() {
         </div>
       </div>
 
-      <div className="w-full max-w-xl">
-        <MessageContainer />
-        <InputMessage />
-      </div>
+      {activeFriend && (
+        <div className="w-full max-w-xl">
+          <MessageContainer />
+          <InputMessage />
+        </div>
+      )}
     </div>
   );
 }

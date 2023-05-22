@@ -8,15 +8,18 @@ export type User = {
 
 export interface UserSlice {
   userLogged: User | undefined;
+  activeFriend: User | undefined;
   friends: User[];
   login: (user: User) => void;
   logout: () => void;
   addFriendList: (friends: User[]) => void;
   addFriend: (friend: User) => void;
+  setActiveFriend: (friend: User) => void;
 }
 
 export const userSlice: StateCreator<UserSlice> = (set, get) => ({
   userLogged: undefined,
+  activeFriend: undefined,
   friends: [],
   login: (user: User) => {
     set({ userLogged: user });
@@ -31,5 +34,8 @@ export const userSlice: StateCreator<UserSlice> = (set, get) => ({
     const friends = get().friends;
     friends.push(friend);
     set({ friends });
-  }
+  },
+  setActiveFriend: (friend: User) => {
+    set({ activeFriend: friend });
+  },
 });

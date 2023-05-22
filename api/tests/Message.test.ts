@@ -4,7 +4,8 @@ import { User } from '../src/Entities/User';
 test('deve criar um objeto Message sem informar a data', () => {
   const message = new Message({
     text: 'text message',
-    user: new User('email@email.com', 'alguem', 'socketId'),
+    sender: new User('email@email.com', 'alguem', 'socketId1'),
+    receiver: new User('email2@email.com', 'alguem', 'socketId2'),
   });
 
   expect(message.text).toBe('text message');
@@ -15,7 +16,8 @@ test('deve criar um objeto Message sem informar a data', () => {
   const messageCreatedAt = new Date();
   const message = new Message({
     text: 'text message',
-    user: new User('email@email.com', 'alguem', 'socketId'),
+    sender: new User('email@email.com', 'alguem', 'socketId'),
+    receiver: new User('email2@email.com', 'alguem', 'socketId2'),
     date: messageCreatedAt,
   });
 
@@ -28,7 +30,8 @@ test('nao pode criar mensagem com texto vazio', () => {
     () =>
       new Message({
         text: '',
-        user: new User('email@email.com', 'alguem', 'socketId'),
+        sender: new User('email@email.com', 'alguem', 'socketId'),
+        receiver: new User('email2@email.com', 'alguem', 'socketId2'),
       }),
   ).toThrow('text message is empty');
 });
@@ -38,7 +41,8 @@ test('nao pode criar mensagem com texto em branco', () => {
     () =>
       new Message({
         text: '    ',
-        user: new User('email@email.com', 'alguem', 'socketId'),
+        sender: new User('email@email.com', 'alguem', 'socketId'),
+        receiver: new User('email2@email.com', 'alguem', 'socketId2'),
       }),
   ).toThrow('text message is empty');
 });

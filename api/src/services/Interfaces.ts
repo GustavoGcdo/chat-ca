@@ -9,6 +9,7 @@ export interface IEventService {
 export interface IMessageRepository {
   save(message: Message): Promise<void>;
   getAll(): Promise<Message[]>;
+  getByFriendship(friendship: Friendship): Promise<Message[]>;
 }
 
 export interface IUserRepository {

@@ -2,7 +2,8 @@ import { StateCreator } from 'zustand';
 import { User } from './user.slice';
 
 export type Message = {
-  user: User;
+  sender: User;
+  receiver: User;
   text: string;
   date: string;
 };

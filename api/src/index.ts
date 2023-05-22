@@ -32,9 +32,11 @@ io.on('connection', (socket) => {
   socket.on('login', async (data) => {
     const user = await new Login(userRepository).execute({ ...data, socketId: socket.id });
     io.to(user.socketId).emit('login-success', user);
+  });
 
-    new GetMessages(messageRepository).execute().then((messages) => {
-      socket.emit('all-messages', messages);
+  socket.on('get-private-messages', ({ userEmail, friendEmail }) => {
+    new GetMessages(messageRepository, userRepository).execute({ userEmail, friendEmail }).then((messages) => {
+      socket.emit('private-messages', messages);
     });
   });
 
@@ -44,19 +46,26 @@ io.on('connection', (socket) => {
     });
   });
 
-  socket.on('new-message', ({ message, userEmail }) => {
-    new SendMessage(eventService, messageRepository, userRepository).execute({
-      message,
-      userEmail,
-    });
+  socket.on('new-message', ({ message, userEmail, receiverEmail }) => {
+    try {
+      new SendMessage(eventService, messageRepository, userRepository).execute({
+        message,
+        senderEmail: userEmail,
+        receiverEmail: receiverEmail,
+      });
+    } catch (error) {
+      logger.info(`new-message error ${(error as Error).toString()}`);
+    }
   });
 
   socket.on('add-friendship', async (data) => {
     try {
-      const friendship = await new AddFriendship(userRepository, friendshipRepository).execute(data);
+      const friendship = await new AddFriendship(userRepository, friendshipRepository).execute(
+        data,
+      );
       socket.to(friendship.receiveUser.socketId).emit('new-friend', friendship.requestUser);
       socket.emit('new-friend', friendship.receiveUser);
-      
+
       logger.info(`friendship added ${JSON.stringify(data)}`);
     } catch (error) {
       logger.info(`friendship added error ${(error as Error).toString()}`);

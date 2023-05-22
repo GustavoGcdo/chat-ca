@@ -15,7 +15,11 @@ describe('caso de uso: Obter mensagens', () => {
 
   test('deve obter as mensagens anteriores', async () => {
     await repository.getAll.mockResolvedValue([
-      new Message({ user: new User('alguem@email', 'alguem', 'idFake'), text: 'hello' }),
+      new Message({
+        sender: new User('alguem@email', 'alguem', 'idFake'),
+        receiver: new User('alguem2@email', 'alguem', 'idFake2'),
+        text: 'hello',
+      }),
     ]);
     const reponse = await useCase.execute();
     expect(Array.isArray(reponse)).toBeTruthy();

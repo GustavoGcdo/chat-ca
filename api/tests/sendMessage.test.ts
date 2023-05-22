@@ -23,7 +23,8 @@ describe('caso de uso: Nova mensagem', () => {
 
     await expect(async () =>
       useCase.execute({
-        userEmail: 'alguem@email.com',
+        senderEmail: 'alguem@email.com',
+        receiverEmail: 'alguem2@email.com',
         message: 'hello',
       }),
     ).not.toThrowError();
@@ -34,7 +35,8 @@ describe('caso de uso: Nova mensagem', () => {
     userRepository.findByEmail.mockResolvedValue(new User('alguem@email', 'alguem', 'idFake'));
 
     await useCase.execute({
-      userEmail: 'alguem@email.com',
+      senderEmail: 'alguem@email.com',
+      receiverEmail: 'alguem2@email.com',
       message: 'hello',
     });
 
@@ -46,7 +48,8 @@ describe('caso de uso: Nova mensagem', () => {
     userRepository.findByEmail.mockResolvedValue(new User('alguem@email', 'alguem', 'idFake'));
 
     await useCase.execute({
-      userEmail: 'alguem@email.com',
+      senderEmail: 'alguem@email.com',
+      receiverEmail: 'alguem2@email.com',
       message: 'hello',
     });
 
@@ -57,7 +60,8 @@ describe('caso de uso: Nova mensagem', () => {
     userRepository.findByEmail.mockResolvedValue(undefined);
 
     await expect(useCase.execute({
-      userEmail: 'alguem@email.com',
+      senderEmail: 'alguem@email.com',
+      receiverEmail: 'alguem2@email.com',
       message: 'hello',
     })).rejects.toThrowError();
    })

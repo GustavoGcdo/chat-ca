@@ -7,11 +7,9 @@ const MessageContainer = () => {
   const { userLogged } = useUserStore();
   const messages = useMessageStore((state) => state.messages);
   const containerScrollRef = useRef<HTMLDivElement>(null);
-
+  
   useEffect(() => {
     const unsubscribe = useMessageStore.subscribe(() => {
-      console.log(messages);
-      
       containerScrollRef.current?.lastElementChild?.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
@@ -25,7 +23,7 @@ const MessageContainer = () => {
   }, []);
 
   const isMyMessage = (message: Message) => {
-    return userLogged?.email == message.user.email;
+    return userLogged?.email == message.sender.email;
   };
 
   const getTimeMessage = (message: Message) => {
@@ -44,7 +42,7 @@ const MessageContainer = () => {
             }`}
             key={index}
           >
-            <span className="text-xs text-gray-500 font-bold">{message.user.name}</span>
+            <span className="text-xs text-gray-500 font-bold">{message.sender.name}</span>
             <span className="block leading-4">{message.text}</span>
             <span
               className={`text-xs text-gray-500 absolute bottom-0 ${

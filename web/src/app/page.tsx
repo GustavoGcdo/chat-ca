@@ -15,8 +15,7 @@ export default function Home() {
     socketInitializer();
 
     return () => {
-      socket?.off('login-success');
-      socket?.off('all-messages');
+      socket?.off('login-success');      
     };
   }, []);
 
@@ -26,10 +25,6 @@ export default function Home() {
     socket.on('login-success', (user: User) => {
       login(user);
       router.push('/chat');
-    });
-
-    socket.on('all-messages', (allMessages) => {
-      setInitialMessages(allMessages);
     });
   };
 
