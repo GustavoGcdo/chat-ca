@@ -1,7 +1,8 @@
 import { create } from 'zustand';
-import { UserSlice, userSlice } from './slices/user.slice';
+import { subscribeWithSelector } from 'zustand/middleware';
 import { MessageSlice, messageSlice } from './slices/message.slice';
 import { RealtimeSlice, realtimeSlice } from './slices/socket.slice';
+import { UserSlice, userSlice } from './slices/user.slice';
 
 export const useRealtimeStore = create<RealtimeSlice>()((...a) => ({
   ...realtimeSlice(...a),

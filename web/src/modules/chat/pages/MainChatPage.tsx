@@ -4,10 +4,13 @@ import AddFriend from '@/modules/user/components/AddFriend';
 import FriendsList from '@/modules/user/components/FriendsList';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useUserStore } from '../../@shared/store/store';
+import { useMessageStore, useRealtimeStore, useUserStore } from '../../@shared/store/store';
+import { Message } from '../../@shared/store/slices/message.slice';
 
 const MainChatPage = () => {
   const { userLogged, activeFriend } = useUserStore();
+  const { addMessage, addFriendWithNewMessages } = useMessageStore();
+  const { socket } = useRealtimeStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -15,10 +18,34 @@ const MainChatPage = () => {
       if (state.userLogged == undefined) {
         router.replace('/');
       }
+
+      if (!socket) return;
+
+      socket.off('receive-message');
+
+      socket.on('receive-message', (message: Message) => {
+        const meSendingMessage =
+          message.sender.email == state.userLogged?.email &&
+          message.receiver.email == state.activeFriend?.email;
+
+        const myActiveFriendSendingMessage =
+          message.receiver.email == state.userLogged?.email &&
+          message.sender.email == state.activeFriend?.email;
+
+        if (meSendingMessage || myActiveFriendSendingMessage) {
+          console.log('adiciona');
+
+          addMessage(message);
+        } else {
+          console.log('não adiciona');
+          addFriendWithNewMessages(message.sender);
+        }
+      });
     });
 
     return () => {
       unsubscribe();
+      socket?.off('receive-message');
     };
   }, []);
 

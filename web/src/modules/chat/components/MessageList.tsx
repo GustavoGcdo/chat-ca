@@ -1,12 +1,10 @@
 import { useEffect, useRef } from 'react';
-import { Message } from '../../@shared/store/slices/message.slice';
-import { useMessageStore, useRealtimeStore, useUserStore } from '../../@shared/store/store';
+import { useMessageStore, useRealtimeStore } from '../../@shared/store/store';
 import MessageItem from './MessageItem';
 
 const MessageList = () => {
   const messages = useMessageStore((state) => state.messages);
-  const { userLogged, activeFriend } = useUserStore();
-  const { addMessage, setInitialMessages } = useMessageStore();
+  const { setInitialMessages } = useMessageStore();
   const { socket } = useRealtimeStore();
   const containerScrollRef = useRef<HTMLDivElement>(null);
 
@@ -31,9 +29,7 @@ const MessageList = () => {
 
     return () => {
       unsubscribe();
-
       socket?.off('private-messages');
-      socket?.off('receive-message');
     };
   }, []);
 
@@ -42,19 +38,6 @@ const MessageList = () => {
 
     socket.on('private-messages', (messages) => {
       setInitialMessages(messages);
-    });
-
-    socket.on('receive-message', (message: Message) => {
-
-      const meSendingMessage =
-        message.sender.email == userLogged?.email && message.receiver.email == activeFriend?.email;
-
-      const myActiveFriendSendingMessage =
-        message.receiver.email == userLogged?.email && message.sender.email == activeFriend?.email;
-
-      if (meSendingMessage || myActiveFriendSendingMessage) {
-        addMessage(message);
-      }
     });
   };
 
