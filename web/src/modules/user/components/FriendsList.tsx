@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { User } from '../store/slices/user.slice';
-import { useRealtimeStore, useUserStore } from '../store/store';
+import { User } from '../../@shared/store/slices/user.slice';
+import { useRealtimeStore, useUserStore } from '../../@shared/store/store';
 import Friend from './Friend';
 
 const FriendsList = () => {

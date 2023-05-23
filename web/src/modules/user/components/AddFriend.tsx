@@ -1,6 +1,6 @@
 import React, { SyntheticEvent, useState } from 'react';
-import InputButton from './InputButton';
-import { useRealtimeStore, useUserStore } from '../store/store';
+import InputButton from '../../@shared/components/InputButton';
+import { useRealtimeStore, useUserStore } from '../../@shared/store/store';
 
 const AddFriend = () => {
   const { userLogged } = useUserStore();

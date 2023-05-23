@@ -1,7 +1,6 @@
 import format from 'date-fns/format';
-import React from 'react';
-import { useUserStore } from '../store/store';
-import { Message } from '../store/slices/message.slice';
+import { Message } from '../../@shared/store/slices/message.slice';
+import { useUserStore } from '../../@shared/store/store';
 
 type Props = {
   message: Message;

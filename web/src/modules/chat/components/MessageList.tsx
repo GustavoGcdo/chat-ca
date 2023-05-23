@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { Message } from '../store/slices/message.slice';
-import { useMessageStore, useRealtimeStore, useUserStore } from '../store/store';
+import { Message } from '../../@shared/store/slices/message.slice';
+import { useMessageStore, useRealtimeStore, useUserStore } from '../../@shared/store/store';
 import MessageItem from './MessageItem';
 
 const MessageList = () => {

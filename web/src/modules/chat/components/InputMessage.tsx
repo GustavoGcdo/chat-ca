@@ -1,5 +1,5 @@
 import { SyntheticEvent, useState } from 'react';
-import { useRealtimeStore, useUserStore } from '../store/store';
+import { useRealtimeStore, useUserStore } from '../../@shared/store/store';
 
 const InputMessage = () => {
   const [value, setValue] = useState('');
