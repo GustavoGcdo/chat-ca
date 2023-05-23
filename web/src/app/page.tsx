@@ -3,11 +3,10 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Login } from '../components/Login';
 import { User } from '../store/slices/user.slice';
-import { useMessageStore, useRealtimeStore, useUserStore } from '../store/store';
+import { useRealtimeStore, useUserStore } from '../store/store';
 
 export default function Home() {
-  const { login } = useUserStore();
-  const { setInitialMessages } = useMessageStore();
+  const { login } = useUserStore();  
   const { socket } = useRealtimeStore();
   const router = useRouter();
 
