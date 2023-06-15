@@ -23,6 +23,7 @@ export class GetMessages {
         requestUser: userFound,
       }),
     );
+    
     return messages;
   }
 }
