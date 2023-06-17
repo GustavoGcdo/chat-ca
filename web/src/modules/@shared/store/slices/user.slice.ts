@@ -23,6 +23,7 @@ export interface UserSlice {
   addFriend: (friend: User) => void;
   setActiveFriend: (friend: User) => void;
   addFriendshipRequestList: (friendshipRequests: FriendshipRequest[]) => void;
+  addFriendshipRequest: (friendshipRequests: FriendshipRequest) => void;
 }
 
 export const userSlice: StateCreator<UserSlice> = (set, get) => ({
@@ -48,6 +49,11 @@ export const userSlice: StateCreator<UserSlice> = (set, get) => ({
     set({ activeFriend: friend });
   },
   addFriendshipRequestList: (friendshipRequests: FriendshipRequest[]) => {
+    set({ friendshipRequests });
+  },
+  addFriendshipRequest: (friendshipRequest: FriendshipRequest) => {
+    const friendshipRequests = get().friendshipRequests;
+    friendshipRequests.push(friendshipRequest);    
     set({ friendshipRequests });
   },
 });

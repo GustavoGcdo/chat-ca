@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 import { useRealtimeStore, useUserStore } from '../../@shared/store/store';
+import { FriendshipRequest } from '../../@shared/store/slices/user.slice';
 
 const FriendshipRequestList = () => {
-  const { friendshipRequests, userLogged, addFriendshipRequestList } = useUserStore();
+  const { friendshipRequests, userLogged, addFriendshipRequestList, addFriendshipRequest } =
+    useUserStore();
   const { socket } = useRealtimeStore();
 
   useEffect(() => {
@@ -18,11 +20,26 @@ const FriendshipRequestList = () => {
 
     socket.emit('get-all-active-friendship-requests', { userEmail: userLogged?.email });
 
-    socket.on('all-active-friendship-requests', (friendshipRequests) => {
-      console.log('opa', friendshipRequests);
+    socket.on('new-friendship-request', (friendship) => {
+      addFriendshipRequest(friendship);
+    });
 
+    socket.on('all-active-friendship-requests', (friendshipRequests) => {
       addFriendshipRequestList(friendshipRequests);
     });
+  };
+
+  const handleReplyRequest = (friendshipRequest: FriendshipRequest) => {
+    if (!socket) return;
+
+    socket.emit('reply-friendship-request', {
+      userEmail: friendshipRequest.receiver.email,
+      friendEmail: friendshipRequest.requester.email,
+      confirm: true,
+    });
+
+    socket.emit('get-all-active-friendship-requests', { userEmail: userLogged?.email });
+    socket.emit('get-friends', { userEmail: userLogged?.email });
   };
 
   return (
@@ -39,7 +56,10 @@ const FriendshipRequestList = () => {
             <span className="px-2 py-1 cursor-pointer hover:border-red-500 border-transparent transition-all  border-2 text-red-500 rounded">
               Excluir
             </span>
-            <span className="px-2 py-1 cursor-pointer hover:border-green-400 border-transparent border-2 transition-all text-green-400 rounded">
+            <span
+              className="px-2 py-1 cursor-pointer hover:border-green-400 border-transparent border-2 transition-all text-green-400 rounded"
+              onClick={() => handleReplyRequest(friendshipRequest)}
+            >
               Aceitar
             </span>
           </div>

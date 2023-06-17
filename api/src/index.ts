@@ -96,7 +96,9 @@ io.on('connection', (socket) => {
       requesterEmail: userEmail,
     });
 
-    socket.emit('new-friendship-request', friendshipRequest);
+    socket
+      .to(friendshipRequest.receiver.socketId)
+      .emit('new-friendship-request', friendshipRequest);
   });
 
   socket.on('reply-friendship-request', async ({ userEmail, friendEmail, confirm }) => {
