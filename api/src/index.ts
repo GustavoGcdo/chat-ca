@@ -11,6 +11,10 @@ import { SendMessage } from './useCases/SendMessage';
 import { AddFriendship } from './useCases/AddUserFriend';
 import { InMemoryFriendshipRepository } from './services/InMemoryFriendshipRepository';
 import { GetFriends } from './useCases/GetFriends';
+import { GetActiveFriendshipRequests } from './useCases/GetActiveFriendshipRequests';
+import { InMemoryFriendshipRequestRepository } from './services/InMemoryFriendshipRequestRepository';
+import { RequestFriendship } from './useCases/RequestFriendship';
+import { ReplyFriendshipRequest } from './useCases/ReplyFriendshipRequest';
 const logger = pino({});
 
 const app = express();
@@ -24,6 +28,7 @@ const io = new Server(httpServer, {
 const messageRepository = new InMemoryMessageRepository();
 const userRepository = new InMemoryUserRepository();
 const friendshipRepository = new InMemoryFriendshipRepository();
+const friendshipRequestRepository = new InMemoryFriendshipRequestRepository();
 
 io.on('connection', (socket) => {
   const eventService = new SocketEventService(socket, io);
@@ -35,9 +40,11 @@ io.on('connection', (socket) => {
   });
 
   socket.on('get-private-messages', ({ userEmail, friendEmail }) => {
-    new GetMessages(messageRepository, userRepository).execute({ userEmail, friendEmail }).then((messages) => {
-      socket.emit('private-messages', messages);
-    });
+    new GetMessages(messageRepository, userRepository)
+      .execute({ userEmail, friendEmail })
+      .then((messages) => {
+        socket.emit('private-messages', messages);
+      });
   });
 
   socket.on('get-friends', ({ userEmail }) => {
@@ -70,6 +77,36 @@ io.on('connection', (socket) => {
     } catch (error) {
       logger.info(`friendship added error ${(error as Error).toString()}`);
     }
+  });
+
+  socket.on('get-all-active-friendship-requests', async ({ userEmail }) => {
+    await new GetActiveFriendshipRequests(userRepository, friendshipRequestRepository)
+      .execute({ receiverEmail: userEmail })
+      .then((friendshipRequests) => {
+        socket.emit('all-active-friendship-requests', friendshipRequests);
+      });
+  });
+
+  socket.on('request-friendship', async ({ userEmail, friendEmail }) => {
+    const friendshipRequest = await new RequestFriendship(
+      userRepository,
+      friendshipRequestRepository,
+    ).execute({
+      receiverEmail: friendEmail,
+      requesterEmail: userEmail,
+    });
+
+    socket.emit('new-friendship-request', friendshipRequest);
+  });
+
+  socket.on('reply-friendship-request', async ({ userEmail, friendEmail, confirm }) => {
+    const useCase = new ReplyFriendshipRequest(
+      userRepository,
+      friendshipRequestRepository,
+      friendshipRepository,
+    );
+
+    await useCase.execute({ receiverEmail: userEmail, requesterEmail: friendEmail, confirm });
   });
 
   socket.on('disconnect', () => {

@@ -1,4 +1,5 @@
 import { Friendship } from '../Entities/Friendship';
+import { FriendshipRequest } from '../Entities/FriendshipRequest';
 import { Message } from '../Entities/Message';
 import { User } from '../Entities/User';
 
@@ -22,4 +23,10 @@ export interface IFriendshipRepository {
   getFriends(userEmail: string): Promise<User[]>;
   save(friendship: Friendship): Promise<void>;
   findFriendship(friendship: Friendship): Promise<Friendship | undefined>;
+}
+export interface IFriendshipRequestRepository {
+  save(friendshipRequest: FriendshipRequest): Promise<void>;
+  find(friendshipRequest: FriendshipRequest): Promise<FriendshipRequest | undefined>;
+  update(friendshipRequest: FriendshipRequest): Promise<void>;
+  getUnrepliedFriendRequests(userReceiver: User): Promise<FriendshipRequest[]>;
 }

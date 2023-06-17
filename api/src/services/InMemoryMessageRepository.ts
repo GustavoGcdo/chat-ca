@@ -1,7 +1,6 @@
-import { IMessageRepository } from './Interfaces';
-import { Message } from '../Entities/Message';
 import { Friendship } from '../Entities/Friendship';
-import { User } from '../Entities/User';
+import { Message } from '../Entities/Message';
+import { IMessageRepository } from './Interfaces';
 
 export class InMemoryMessageRepository implements IMessageRepository {
   private messages: Message[];

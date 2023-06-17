@@ -6,21 +6,30 @@ export type User = {
   email: string;
 };
 
+export type FriendshipRequest = {
+  requester: User;
+  receiver: User;
+  replied: boolean;
+};
+
 export interface UserSlice {
   userLogged: User | undefined;
   activeFriend: User | undefined;
+  friendshipRequests: FriendshipRequest[];
   friends: User[];
   login: (user: User) => void;
   logout: () => void;
   addFriendList: (friends: User[]) => void;
   addFriend: (friend: User) => void;
   setActiveFriend: (friend: User) => void;
+  addFriendshipRequestList: (friendshipRequests: FriendshipRequest[]) => void;
 }
 
 export const userSlice: StateCreator<UserSlice> = (set, get) => ({
   userLogged: undefined,
   activeFriend: undefined,
   friends: [],
+  friendshipRequests: [],
   login: (user: User) => {
     set({ userLogged: user });
   },
@@ -37,5 +46,8 @@ export const userSlice: StateCreator<UserSlice> = (set, get) => ({
   },
   setActiveFriend: (friend: User) => {
     set({ activeFriend: friend });
+  },
+  addFriendshipRequestList: (friendshipRequests: FriendshipRequest[]) => {
+    set({ friendshipRequests });
   },
 });

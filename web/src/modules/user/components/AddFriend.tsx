@@ -12,9 +12,9 @@ const AddFriend = () => {
 
     if (!userLogged || !socket) return;
 
-    socket.emit('add-friendship', {
+    socket.emit('request-friendship', {
       userEmail: userLogged.email,
-      userFriendEmail: emailToAdd,
+      friendEmail: emailToAdd,
     });
   };
 

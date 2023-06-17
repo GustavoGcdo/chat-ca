@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useMessageStore, useRealtimeStore, useUserStore } from '../../@shared/store/store';
 import { Message } from '../../@shared/store/slices/message.slice';
+import FriendshipRequestList from '../../user/components/FriendshipRequestList';
 
 const MainChatPage = () => {
   const { userLogged, activeFriend } = useUserStore();
@@ -33,11 +34,8 @@ const MainChatPage = () => {
           message.sender.email == state.activeFriend?.email;
 
         if (meSendingMessage || myActiveFriendSendingMessage) {
-          console.log('adiciona');
-
           addMessage(message);
         } else {
-          console.log('não adiciona');
           addFriendWithNewMessages(message.sender);
         }
       });
@@ -56,10 +54,17 @@ const MainChatPage = () => {
           Bem vindo
           <strong className="ml-2 font-bold">{userLogged?.email}</strong>!
         </h3>
-        <h3 className="text-start font-medium py-4 text-xl">Amigos</h3>
 
-        <AddFriend />
-        <FriendsList />
+        <div>
+          <h3 className="text-start font-medium py-4 text-xl">Solicitação de amizade</h3>
+          <FriendshipRequestList />
+        </div>
+
+        <div>
+          <h3 className="text-start font-medium py-4 text-xl">Amigos</h3>
+          <AddFriend />
+          <FriendsList />
+        </div>
       </div>
 
       {activeFriend && (
