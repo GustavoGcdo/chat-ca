@@ -3,8 +3,13 @@ import { useRealtimeStore, useUserStore } from '../../@shared/store/store';
 import { FriendshipRequest } from '../../@shared/store/slices/user.slice';
 
 const FriendshipRequestList = () => {
-  const { friendshipRequests, userLogged, addFriendshipRequestList, addFriendshipRequest } =
-    useUserStore();
+  const {
+    friendshipRequests,
+    userLogged,
+    addFriendshipRequestList,
+    addFriendshipRequest,
+    removeFriendshipRequest,
+  } = useUserStore();
   const { socket } = useRealtimeStore();
 
   useEffect(() => {
@@ -38,8 +43,7 @@ const FriendshipRequestList = () => {
       confirm: true,
     });
 
-    socket.emit('get-all-active-friendship-requests', { userEmail: userLogged?.email });
-    socket.emit('get-friends', { userEmail: userLogged?.email });
+    removeFriendshipRequest(friendshipRequest);
   };
 
   return (

@@ -48,5 +48,7 @@ export class ReplyFriendshipRequest {
 
     friendshipRequest.replied = true;
     await this.friendshipRequestRepository.update(friendshipRequest);
+
+    return friendshipRequest;
   }
 }

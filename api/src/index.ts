@@ -108,7 +108,9 @@ io.on('connection', (socket) => {
       friendshipRepository,
     );
 
-    await useCase.execute({ receiverEmail: userEmail, requesterEmail: friendEmail, confirm });
+    const friendship = await useCase.execute({ receiverEmail: userEmail, requesterEmail: friendEmail, confirm });
+    socket.emit('new-friend', friendship.requester);
+    socket.to(friendship.requester.socketId).emit('new-friend', friendship.receiver);
   });
 
   socket.on('disconnect', () => {
