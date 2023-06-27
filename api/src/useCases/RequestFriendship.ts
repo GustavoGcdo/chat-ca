@@ -1,5 +1,10 @@
+import { Friendship } from '../Entities/Friendship';
 import { FriendshipRequest } from '../Entities/FriendshipRequest';
-import { IFriendshipRequestRepository, IUserRepository } from '../services/Interfaces';
+import {
+  IFriendshipRepository,
+  IFriendshipRequestRepository,
+  IUserRepository,
+} from '../services/Interfaces';
 
 type RequestFriendshipDto = {
   requesterEmail: string;
@@ -10,6 +15,7 @@ export class RequestFriendship {
   constructor(
     private userRepository: IUserRepository,
     private friendshipRequestRepository: IFriendshipRequestRepository,
+    private friendshipRepository: IFriendshipRepository,
   ) {}
 
   async execute(dto: RequestFriendshipDto) {
@@ -22,6 +28,14 @@ export class RequestFriendship {
 
     if (!requestUser) {
       throw new Error('friend user not found');
+    }
+
+    const friendshipFound = await this.friendshipRepository.findFriendship(
+      new Friendship({ receiveUser, requestUser }),
+    );
+   
+    if (friendshipFound !== undefined) {
+      throw new Error('Already friendship with this user');
     }
 
     const newFriendshipRequest = new FriendshipRequest({

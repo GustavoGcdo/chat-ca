@@ -9,6 +9,7 @@ import { ReplyFriendshipRequest } from '../src/useCases/ReplyFriendshipRequest';
 import { RequestFriendship } from '../src/useCases/RequestFriendship';
 import { FriendshipRequest } from '../src/Entities/FriendshipRequest';
 import { GetActiveFriendshipRequests } from '../src/useCases/GetActiveFriendshipRequests';
+import { Friendship } from '../src/Entities/Friendship';
 
 describe('Solicitação de amizade', () => {
   let userRepo = mock<IUserRepository>();
@@ -25,8 +26,9 @@ describe('Solicitação de amizade', () => {
 
   test('deve solicitar amizade para um usuario', async () => {
     let requestFriendshipRepo = mock<IFriendshipRequestRepository>();
+    let friendshipRepo = mock<IFriendshipRepository>();
 
-    const useCase = new RequestFriendship(userRepo, requestFriendshipRepo);
+    const useCase = new RequestFriendship(userRepo, requestFriendshipRepo, friendshipRepo);
 
     await useCase.execute({
       requesterEmail: user.email,
@@ -70,5 +72,23 @@ describe('Solicitação de amizade', () => {
     const friendshipRequests = await useCase.execute({ receiverEmail: friend.email });
 
     expect(friendshipRequests.length).toBe(1);
+  });
+
+  test('nao deve criar uma solicitacao de amizade caso já seja amigo desse usuario', async () => {
+    let requestFriendshipRepo = mock<IFriendshipRequestRepository>();
+    const friendshipRepository = mock<IFriendshipRepository>();
+
+    friendshipRepository.findFriendship.mockResolvedValue(
+      new Friendship({ receiveUser: friend, requestUser: user }),
+    );
+
+    const useCase = new RequestFriendship(userRepo, requestFriendshipRepo, friendshipRepository);
+
+    await expect(() =>
+      useCase.execute({
+        requesterEmail: user.email,
+        receiverEmail: friend.email,
+      }),
+    ).rejects.toThrowError('Already friendship with this user');
   });
 });
