@@ -42,6 +42,18 @@ export class RequestFriendship {
       throw new Error('Already friendship with this user');
     }
 
+    const friendshipRequests = await this.friendshipRequestRepository.getUnrepliedFriendRequests(
+      receiveUser,
+    );
+
+    const sameFriendshipRequest = friendshipRequests.find(
+      (f) => f.requester.email == requestUser.email,
+    );
+
+    if (sameFriendshipRequest) {
+      throw new Error('friendship request already sending');
+    }
+
     const newFriendshipRequest = new FriendshipRequest({
       requester: requestUser,
       receiver: receiveUser,

@@ -13,8 +13,14 @@ import { Friendship } from '../src/Entities/Friendship';
 
 describe('Solicitação de amizade', () => {
   let userRepo = mock<IUserRepository>();
+  let requestFriendshipRepo = mock<IFriendshipRequestRepository>();
   const user = new User('user@email.com', 'usuario', 'socket1');
   const friend = new User('friend@email.com', 'Amigo', 'socket2');
+  const validFriendshipRequest = new FriendshipRequest({
+    receiver: user,
+    requester: friend,
+    replied: false,
+  });
 
   userRepo.findByEmail.mockImplementation(async (email) => {
     if (email == user.email) {
@@ -24,10 +30,12 @@ describe('Solicitação de amizade', () => {
     }
   });
 
-  test('deve solicitar amizade para um usuario', async () => {
-    let requestFriendshipRepo = mock<IFriendshipRequestRepository>();
-    let friendshipRepo = mock<IFriendshipRepository>();
+  beforeEach(() => {
+    requestFriendshipRepo.getUnrepliedFriendRequests.mockResolvedValue([]);
+  });
 
+  test('deve solicitar amizade para um usuario', async () => {
+    let friendshipRepo = mock<IFriendshipRepository>();
     const useCase = new RequestFriendship(userRepo, requestFriendshipRepo, friendshipRepo);
 
     await useCase.execute({
@@ -39,7 +47,6 @@ describe('Solicitação de amizade', () => {
   });
 
   test('deve aceitar a uma solicitacao de amizade', async () => {
-    let requestFriendshipRepo = mock<IFriendshipRequestRepository>();
     let friendshipRepo = mock<IFriendshipRepository>();
 
     requestFriendshipRepo.find.mockImplementationOnce(async (friendshipRequest) => {
@@ -58,15 +65,7 @@ describe('Solicitação de amizade', () => {
   });
 
   test('deve buscar as solicitacoes de amizade não respondidas', async () => {
-    let requestFriendshipRepo = mock<IFriendshipRequestRepository>();
-
-    const friendshipRequest = new FriendshipRequest({
-      receiver: user,
-      requester: friend,
-      replied: false,
-    });
-
-    requestFriendshipRepo.getUnrepliedFriendRequests.mockResolvedValue([friendshipRequest]);
+    requestFriendshipRepo.getUnrepliedFriendRequests.mockResolvedValue([validFriendshipRequest]);
 
     const useCase = new GetActiveFriendshipRequests(userRepo, requestFriendshipRepo);
     const friendshipRequests = await useCase.execute({ receiverEmail: friend.email });
@@ -75,7 +74,6 @@ describe('Solicitação de amizade', () => {
   });
 
   test('nao deve criar uma solicitacao de amizade caso já seja amigo desse usuario', async () => {
-    let requestFriendshipRepo = mock<IFriendshipRequestRepository>();
     const friendshipRepository = mock<IFriendshipRepository>();
 
     friendshipRepository.findFriendship.mockResolvedValue(
@@ -93,9 +91,7 @@ describe('Solicitação de amizade', () => {
   });
 
   test('nao deve criar uma solicitacao de amizade com você mesmo', async () => {
-    let requestFriendshipRepo = mock<IFriendshipRequestRepository>();
     const friendshipRepository = mock<IFriendshipRepository>();
-
     const useCase = new RequestFriendship(userRepo, requestFriendshipRepo, friendshipRepository);
 
     await expect(() =>
@@ -104,5 +100,18 @@ describe('Solicitação de amizade', () => {
         receiverEmail: user.email,
       }),
     ).rejects.toThrowError('You cannot create a friendship request with yourself');
+  });
+
+  test('nao deve criar uma solicitacao de amizade caso já tenha solicitado', async () => {
+    const friendshipRepository = mock<IFriendshipRepository>();
+    requestFriendshipRepo.getUnrepliedFriendRequests.mockResolvedValue([validFriendshipRequest]);
+    const useCase = new RequestFriendship(userRepo, requestFriendshipRepo, friendshipRepository);
+
+    await expect(() =>
+      useCase.execute({
+        receiverEmail: user.email,
+        requesterEmail: friend.email,
+      }),
+    ).rejects.toThrowError('friendship request already sending');
   });
 });

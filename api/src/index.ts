@@ -88,17 +88,22 @@ io.on('connection', (socket) => {
   });
 
   socket.on('request-friendship', async ({ userEmail, friendEmail }) => {
-    const friendshipRequest = await new RequestFriendship(
-      userRepository,
-      friendshipRequestRepository,
-    ).execute({
-      receiverEmail: friendEmail,
-      requesterEmail: userEmail,
-    });
+    try {
+      const friendshipRequest = await new RequestFriendship(
+        userRepository,
+        friendshipRequestRepository,
+        friendshipRepository,
+      ).execute({
+        receiverEmail: friendEmail,
+        requesterEmail: userEmail,
+      });
 
-    socket
-      .to(friendshipRequest.receiver.socketId)
-      .emit('new-friendship-request', friendshipRequest);
+      socket
+        .to(friendshipRequest.receiver.socketId)
+        .emit('new-friendship-request', friendshipRequest);
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   socket.on('reply-friendship-request', async ({ userEmail, friendEmail, confirm }) => {
@@ -108,7 +113,12 @@ io.on('connection', (socket) => {
       friendshipRepository,
     );
 
-    const friendship = await useCase.execute({ receiverEmail: userEmail, requesterEmail: friendEmail, confirm });
+    const friendship = await useCase.execute({
+      receiverEmail: userEmail,
+      requesterEmail: friendEmail,
+      confirm,
+    });
+
     socket.emit('new-friend', friendship.requester);
     socket.to(friendship.requester.socketId).emit('new-friend', friendship.receiver);
   });
