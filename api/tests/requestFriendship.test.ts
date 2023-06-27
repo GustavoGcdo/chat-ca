@@ -91,4 +91,18 @@ describe('Solicitação de amizade', () => {
       }),
     ).rejects.toThrowError('Already friendship with this user');
   });
+
+  test('nao deve criar uma solicitacao de amizade com você mesmo', async () => {
+    let requestFriendshipRepo = mock<IFriendshipRequestRepository>();
+    const friendshipRepository = mock<IFriendshipRepository>();
+
+    const useCase = new RequestFriendship(userRepo, requestFriendshipRepo, friendshipRepository);
+
+    await expect(() =>
+      useCase.execute({
+        requesterEmail: user.email,
+        receiverEmail: user.email,
+      }),
+    ).rejects.toThrowError('You cannot create a friendship request with yourself');
+  });
 });

@@ -30,10 +30,14 @@ export class RequestFriendship {
       throw new Error('friend user not found');
     }
 
+    if (receiveUser.email == requestUser.email) {
+      throw new Error('You cannot create a friendship request with yourself');
+    }
+
     const friendshipFound = await this.friendshipRepository.findFriendship(
       new Friendship({ receiveUser, requestUser }),
     );
-   
+
     if (friendshipFound !== undefined) {
       throw new Error('Already friendship with this user');
     }
