@@ -42,7 +42,7 @@ const MessageList = () => {
   };
 
   return (
-    <div className="p-2 my-2 rounded h-full min-h-[400px] max-h-[400px] bg-white overflow-auto">
+    <div className="p-2 mb-2 rounded h-full max-h-[700px] overflow-auto bg-white ">
       <div className="flex flex-col gap-2 pb-2" ref={containerScrollRef}>
         {messages.map((message, index) => (
           <MessageItem key={index} message={message} />

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useRealtimeStore, useUserStore } from '../../@shared/store/store';
 import { FriendshipRequest } from '../../@shared/store/slices/user.slice';
+import { Check, Trash } from 'lucide-react';
 
 const FriendshipRequestList = () => {
   const {
@@ -49,26 +50,30 @@ const FriendshipRequestList = () => {
   return (
     <div className="flex flex-col gap-2">
       {friendshipRequests.map((friendshipRequest, index) => (
-        <div key={index} className="flex items-center bg-slate-900 p-3 rounded text-white text-sm">
+        <div
+          key={index}
+          className="flex items-center bg-white/30 border-white p-3 rounded text-white text-sm"
+        >
           <div className="flex flex-col flex-grow">
             <span>
               <strong>{friendshipRequest.requester.name}</strong>
             </span>
             <span>{friendshipRequest.requester.email}</span>
           </div>
-          <div className="flex gap-1">
-            <span className="px-2 py-1 cursor-pointer hover:border-red-500 border-transparent transition-all  border-2 text-red-500 rounded">
-              Excluir
+          <div className="flex gap-3 font-bold">
+            <span className="p-2 cursor-pointer hover:bg-white text-white hover:text-red-500 rounded-full border-transparent transition-all  border-2 ">
+              <Trash size={20} strokeWidth={2} />
             </span>
             <span
-              className="px-2 py-1 cursor-pointer hover:border-green-400 border-transparent border-2 transition-all text-green-400 rounded"
+              className="p-2 cursor-pointer hover:bg-white text-white hover:text-green-400 rounded-full border-transparent border-2 transition-all "
               onClick={() => handleReplyRequest(friendshipRequest)}
             >
-              Aceitar
+              <Check size={20} strokeWidth={2} />
             </span>
           </div>
         </div>
       ))}
+      {friendshipRequests.length == 0 && <div className="text-sm">Nenhuma solicitação</div>}
     </div>
   );
 };

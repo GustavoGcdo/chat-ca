@@ -20,7 +20,7 @@ const InputMessage = () => {
   };
 
   return (
-    <form className="flex pl-3 bg-white rounded" onSubmit={handleSend}>
+    <form className="flex bg-stone-200 p-4" onSubmit={handleSend}>
       <input
         autoFocus
         value={value}

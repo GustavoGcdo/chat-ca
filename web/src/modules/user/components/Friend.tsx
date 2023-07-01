@@ -40,17 +40,17 @@ const Friend = ({ friend }: Props) => {
 
   return (
     <div
-      className={`p-2 bg-gray-300 border-2 rounded relative ${
+      className={`p-2 bg-white/20 border-2 text-white rounded relative cursor-pointer ${
         activeFriend?.email == friend.email
-          ? 'bg-slate-900 text-white border-slate-900'
-          : 'bg-gray-200 border-slate-400'
+          ? 'border-white font-semibold'
+          : 'border-transparent'
       }`}
       key={friend.socketId}
       onClick={() => handleActiveFriend(friend)}
     >
       <span className="block">{friend.name}</span>
       {hasNewMessages && (
-        <span className="rounded-full bg-green-500 text-red-600 w-4 h-4 absolute right-2 my-auto top-0 bottom-0"></span>
+        <span className="rounded-full bg-green-300 text-red-600 w-4 h-4 absolute right-2 my-auto top-0 bottom-0"></span>
       )}
     </div>
   );

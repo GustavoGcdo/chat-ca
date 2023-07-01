@@ -20,7 +20,7 @@ const FriendsList = () => {
     if (!socket) return;
 
     socket.emit('get-friends', { userEmail: userLogged?.email });
-    
+
     socket.on('new-friend', (friend) => {
       addFriend(friend);
     });
@@ -31,13 +31,12 @@ const FriendsList = () => {
   };
 
   return (
-    <div>
-      <span className="block mb-3">Meus amigos</span>
-      <div className="flex flex-col gap-2">
-        {friends.map((friend: User) => (
-          <Friend key={friend.socketId} friend={friend} />
-        ))}
-      </div>
+    <div className="flex flex-col gap-2">
+      {friends.map((friend: User) => (
+        <Friend key={friend.socketId} friend={friend} />
+      ))}
+
+      {friends.length == 0 && <div className='text-sm'>Nenhum amigo adicionado</div>}
     </div>
   );
 };

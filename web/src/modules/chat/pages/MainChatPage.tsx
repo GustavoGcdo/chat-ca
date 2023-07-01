@@ -48,31 +48,53 @@ const MainChatPage = () => {
   }, []);
 
   return (
-    <div className="flex gap-10 w-full justify-center">
-      <div className="w-full max-w-md pb-10">
-        <h3 className="text-center font-medium py-4 text-xl">
-          Bem vindo
-          <strong className="ml-2 font-bold">{userLogged?.email}</strong>!
-        </h3>
+    <div className="flex flex-1 w-full max-w-7xl justify-center">
+      <div className="flex flex-col w-full max-w-sm py-4 grow bg-primary rounded-l-lg text-white">
+        <div className="p-4 mb-5 flex flex-col justify-center">
+          <h1 className="text-2xl uppercase font-light">
+            CHAT <strong className="font-bold ml-[-7px]">CA</strong>
+          </h1>
+        </div>
 
-        <div>
-          <h3 className="text-start font-medium py-4 text-xl">Solicitação de amizade</h3>
+        <div className="p-4">
+          <h3 className="mb-3 font-semibold text-white/90 text-xs uppercase">
+            Solicitação de amizade
+          </h3>
           <FriendshipRequestList />
         </div>
 
-        <div>
-          <h3 className="text-start font-medium py-4 text-xl">Amigos</h3>
+        <div className="p-4">
+          <h3 className="mb-3 font-semibold text-white/90 text-xs uppercase">Novo amigo</h3>
           <AddFriend />
+        </div>
+
+        <div className="p-4 grow">
+          <span className="block mb-3 font-semibold text-white/90 text-xs uppercase">
+            Meus amigos
+          </span>
           <FriendsList />
+        </div>
+
+        <div className="p-4 flex flex-col justify-center">
+          <h2 className="text-xl uppercase font-light">{userLogged?.name}</h2>
+          <h3 className="font-semibold">{userLogged?.email}</h3>
         </div>
       </div>
 
-      {activeFriend && (
-        <div className="w-full max-w-xl">
-          <MessageList />
-          <InputMessage />
-        </div>
-      )}
+      <div className="w-full flex flex-col rounded-r-lg bg-white">
+        {activeFriend ? (
+          <div className="flex flex-col h-full justify-center">
+            <div className="p-4 leading-3 flex flex-col grow justify-center border-b-2 text-stone-700">
+              <h2 className="font-semibold text-xl">{activeFriend?.name}</h2>
+            </div>
+
+            <MessageList />
+            <InputMessage />
+          </div>
+        ) : (
+          <div></div>
+        )}
+      </div>
     </div>
   );
 };

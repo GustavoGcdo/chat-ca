@@ -22,9 +22,10 @@ const AddFriend = () => {
     <form className="mb-5" onSubmit={handleAddFriend}>
       <InputButton
         name="email"
-        buttonText="adicionar"
+        buttonText="adicionar"        
         inputProps={{
-          placeholder: 'Informe o email do seu amigo',
+          className: 'bg-white/40',
+          placeholder: 'E-mail do seu amigo',
           value: emailToAdd,
           onChange: (e) => setEmailToAdd(e.target.value),
         }}

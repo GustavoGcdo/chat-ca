@@ -12,7 +12,7 @@ const InputButton = ({ name, buttonText, onButtonClick, inputProps }: Props) => 
   return (
     <div className="flex">
       <Input name={name} {...inputProps} />
-      <button className="bg-gray-800 px-4 text-white rounded-r" onClick={onButtonClick}>
+      <button className="bg-white/30 px-4 text-white rounded-r" onClick={onButtonClick}>
         {buttonText}
       </button>
     </div>
