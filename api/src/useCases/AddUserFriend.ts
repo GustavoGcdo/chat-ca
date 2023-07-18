@@ -1,4 +1,4 @@
-import { Friendship } from '../Entities/Friendship';
+import { Friendship } from '../entities/Friendship';
 import { IFriendshipRepository, IUserRepository } from '../services/Interfaces';
 
 type AddFriendshipDto = {

@@ -1,4 +1,4 @@
-import { Friendship } from '../Entities/Friendship';
+import { Friendship } from '../entities/Friendship';
 import { IMessageRepository, IUserRepository } from '../services/Interfaces';
 
 type GetMessagesDto = { userEmail: string; friendEmail: string };

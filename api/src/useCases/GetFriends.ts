@@ -1,4 +1,4 @@
-import { User } from '../Entities/User';
+import { User } from '../entities/User';
 import { IFriendshipRepository } from '../services/Interfaces';
 
 type GetFriendsDto = { userEmail: string };

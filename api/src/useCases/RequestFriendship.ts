@@ -1,5 +1,5 @@
-import { Friendship } from '../Entities/Friendship';
-import { FriendshipRequest } from '../Entities/FriendshipRequest';
+import { Friendship } from '../entities/Friendship';
+import { FriendshipRequest } from '../entities/FriendshipRequest';
 import {
   IFriendshipRepository,
   IFriendshipRequestRepository,

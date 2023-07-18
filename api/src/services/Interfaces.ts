@@ -1,7 +1,7 @@
-import { Friendship } from '../Entities/Friendship';
-import { FriendshipRequest } from '../Entities/FriendshipRequest';
-import { Message } from '../Entities/Message';
-import { User } from '../Entities/User';
+import { Friendship } from '../entities/Friendship';
+import { FriendshipRequest } from '../entities/FriendshipRequest';
+import { Message } from '../entities/Message';
+import { User } from '../entities/User';
 
 export interface IEventService {
   notifyAll(message: Message): void;

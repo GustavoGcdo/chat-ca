@@ -1,5 +1,5 @@
-import { Friendship } from '../Entities/Friendship';
-import { Message } from '../Entities/Message';
+import { Friendship } from '../entities/Friendship';
+import { Message } from '../entities/Message';
 import { IMessageRepository } from './Interfaces';
 
 export class InMemoryMessageRepository implements IMessageRepository {

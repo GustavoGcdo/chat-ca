@@ -1,5 +1,5 @@
-import { Friendship } from '../Entities/Friendship';
-import { User } from '../Entities/User';
+import { Friendship } from '../entities/Friendship';
+import { User } from '../entities/User';
 import { IFriendshipRepository } from './Interfaces';
 
 export class InMemoryFriendshipRepository implements IFriendshipRepository {

@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { IEventService } from './Interfaces';
-import { Message } from '../Entities/Message';
+import { Message } from '../entities/Message';
 
 export class SocketEventService implements IEventService {
   constructor(private socket: Socket, private server: Server) {}

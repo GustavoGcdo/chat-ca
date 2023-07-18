@@ -1,5 +1,5 @@
 import { IEventService, IMessageRepository, IUserRepository } from '../services/Interfaces';
-import { Message } from '../Entities/Message';
+import { Message } from '../entities/Message';
 
 type SendMessageDto = {
   message: string;
