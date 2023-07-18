@@ -1,5 +1,5 @@
 import { mock } from 'jest-mock-extended';
-import { User } from '../src/Entities/User';
+import { User } from '../src/entities/User';
 import {
   IFriendshipRepository,
   IFriendshipRequestRepository,
@@ -7,9 +7,9 @@ import {
 } from '../src/services/Interfaces';
 import { ReplyFriendshipRequest } from '../src/useCases/ReplyFriendshipRequest';
 import { RequestFriendship } from '../src/useCases/RequestFriendship';
-import { FriendshipRequest } from '../src/Entities/FriendshipRequest';
+import { FriendshipRequest } from '../src/entities/FriendshipRequest';
 import { GetActiveFriendshipRequests } from '../src/useCases/GetActiveFriendshipRequests';
-import { Friendship } from '../src/Entities/Friendship';
+import { Friendship } from '../src/entities/Friendship';
 
 describe('Solicitação de amizade', () => {
   let userRepo = mock<IUserRepository>();

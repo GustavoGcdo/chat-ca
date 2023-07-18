@@ -1,7 +1,7 @@
 import { mock } from 'jest-mock-extended';
 import { Login } from '../src/useCases/Login';
 import { IUserRepository } from '../src/services/Interfaces';
-import { User } from '../src/Entities/User';
+import { User } from '../src/entities/User';
 
 test('deve fazer cadastro e vincular usuario ao socketId', async () => {
   const repository = mock<IUserRepository>();

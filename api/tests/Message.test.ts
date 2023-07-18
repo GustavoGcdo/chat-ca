@@ -1,5 +1,5 @@
-import { Message } from '../src/Entities/Message';
-import { User } from '../src/Entities/User';
+import { Message } from '../src/entities/Message';
+import { User } from '../src/entities/User';
 
 test('deve criar um objeto Message sem informar a data', () => {
   const message = new Message({

@@ -1,7 +1,7 @@
 import { mock } from 'jest-mock-extended';
 import { IEventService, IMessageRepository, IUserRepository } from '../src/services/Interfaces';
 import { SendMessage } from '../src/useCases/SendMessage';
-import { User } from '../src/Entities/User';
+import { User } from '../src/entities/User';
 
 describe('caso de uso: Nova mensagem', () => {
   let eventService = mock<IEventService>();

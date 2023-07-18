@@ -1,8 +1,8 @@
 import { mock } from 'jest-mock-extended';
-import { Message } from '../src/Entities/Message';
+import { Message } from '../src/entities/Message';
 import { IMessageRepository, IUserRepository } from '../src/services/Interfaces';
 import { GetMessages } from '../src/useCases/GetMessages';
-import { User } from '../src/Entities/User';
+import { User } from '../src/entities/User';
 
 describe('caso de uso: Obter mensagens', () => {
   let repository = mock<IMessageRepository>();

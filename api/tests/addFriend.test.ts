@@ -1,5 +1,5 @@
 import { mock } from 'jest-mock-extended';
-import { User } from '../src/Entities/User';
+import { User } from '../src/entities/User';
 import { IFriendshipRepository, IUserRepository } from '../src/services/Interfaces';
 import { AddFriendship } from '../src/useCases/AddUserFriend';
 
